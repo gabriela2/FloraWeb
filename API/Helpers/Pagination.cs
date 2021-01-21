@@ -5,7 +5,7 @@ namespace API.Helpers
 {
     public class Pagination<T> where T: class
     {
-        public Pagination(int pageIndex, int pageSize, int totalItems, IReadOnlyList<FlowerToReturnDto> data)
+        public Pagination(int pageIndex, int pageSize, int totalItems, IReadOnlyList<ProductToReturnDto> data)
         {
             PageIndex = pageIndex;
             PageSize = pageSize;
@@ -19,6 +19,6 @@ namespace API.Helpers
 
        public IReadOnlyList<T> Data { get; set; }
         public int TotalItems { get; }
-        public IReadOnlyList<FlowerToReturnDto> Data1 { get; }
+        public IReadOnlyList<ProductToReturnDto> Data1 { get; }
     }
 }

@@ -7,10 +7,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data
 {
-    public class FlowerRepository : IFlowerRepository
+    public class ProductRepository : IProductRepository
     {
         private readonly StoreContext _context;
-        public FlowerRepository(StoreContext context)
+        public ProductRepository(StoreContext context)
         {
             _context = context;
         }
@@ -25,15 +25,15 @@ namespace Infrastructure.Data
             return await _context.FlowerCategories.ToListAsync();
         }
 
-        public async Task<Flower> GetFlowerByIdAsync(int id)
+        public async Task<Product> GetProductByIdAsync(int id)
         {
             
-            return await _context.Flowers.Include(p => p.FlowerType).Include(p => p.FlowerCategory).FirstOrDefaultAsync(p => p.Id==id);
+            return await _context.Products.Include(p => p.FlowerType).Include(p => p.FlowerCategory).FirstOrDefaultAsync(p => p.Id==id);
         }
 
-        public async Task<IReadOnlyList<Flower>> GetFlowersAsync()
+        public async Task<IReadOnlyList<Product>> GetProductsAsync()
         {
-            return await _context.Flowers.Include(p => p.FlowerType).Include(p => p.FlowerCategory).ToListAsync();
+            return await _context.Products.Include(p => p.FlowerType).Include(p => p.FlowerCategory).ToListAsync();
         }
 
         public async Task<FlowerType> GetFlowerTypeByIdAsync(int id)

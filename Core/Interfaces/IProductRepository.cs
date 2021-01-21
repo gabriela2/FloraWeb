@@ -4,10 +4,10 @@ using Core.Entities;
 
 namespace Core.Interfaces
 {
-    public interface IFlowerRepository
+    public interface IProductRepository
     {
-         Task<Flower> GetFlowerByIdAsync(int id);
-         Task<IReadOnlyList<Flower>> GetFlowersAsync();
+         Task<Product> GetProductByIdAsync(int id);
+         Task<IReadOnlyList<Product>> GetProductsAsync();
          Task<FlowerCategory> GetFlowerCategoryByIdAsync(int id);
          Task<IReadOnlyList<FlowerCategory>> GetFlowerCategoriesAsync();
          Task<FlowerType> GetFlowerTypeByIdAsync(int id);

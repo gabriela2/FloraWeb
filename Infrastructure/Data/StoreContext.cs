@@ -9,7 +9,7 @@ namespace Infrastructure.Data
     {
         public StoreContext(DbContextOptions<StoreContext> options) : base(options){}
         
-        public DbSet<Flower> Flowers { get; set;}
+        public DbSet<Product> Products { get; set;}
         public DbSet<FlowerCategory> FlowerCategories { get; set; }
         public DbSet<FlowerType> FlowerTypes { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)

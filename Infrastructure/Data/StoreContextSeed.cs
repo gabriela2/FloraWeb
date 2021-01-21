@@ -45,16 +45,16 @@ namespace Infrastructure.Data
                     await context.SaveChangesAsync();
                 }
 
-                if (!context.Flowers.Any())
+                if (!context.Products.Any())
                 {
-                    var flowersData =
+                    var productsData =
                         File.ReadAllText("../Infrastructure/Data/SeedData/flowers.json");
 
-                    var flowers = JsonSerializer.Deserialize<List<Flower>>(flowersData);
+                    var flowers = JsonSerializer.Deserialize<List<Product>>(productsData);
 
                     foreach (var item in flowers)
                     {
-                        context.Flowers.Add(item);
+                        context.Products.Add(item);
                     }
 
                     await context.SaveChangesAsync();

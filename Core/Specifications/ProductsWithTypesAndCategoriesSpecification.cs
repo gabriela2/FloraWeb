@@ -5,23 +5,23 @@ using Core.Entities;
 
 namespace Core.Specifications
 {
-    public class FlowersWithTypesAndCategoriesSpecification : BaseSpecification<Flower>
+    public class ProductsWithTypesAndCategoriesSpecification : BaseSpecification<Product>
     {
-        public FlowersWithTypesAndCategoriesSpecification(FlowerSpecParams flowerParams)
+        public ProductsWithTypesAndCategoriesSpecification(ProductSpecParams productParams)
             :base(x => 
-            (string.IsNullOrEmpty(flowerParams.Search) || x.Name.ToLower().Contains(flowerParams.Search))&&
-            (!flowerParams.CategoryId.HasValue || x.FlowerCategoryId==flowerParams.CategoryId)&&
-            (!flowerParams.TypeId.HasValue || x.FlowerTypeId==flowerParams.TypeId)
+            (string.IsNullOrEmpty(productParams.Search) || x.Name.ToLower().Contains(productParams.Search))&&
+            (!productParams.CategoryId.HasValue || x.FlowerCategoryId==productParams.CategoryId)&&
+            (!productParams.TypeId.HasValue || x.FlowerTypeId==productParams.TypeId)
             )
         {
             AddInclude(x => x.FlowerType);
             AddInclude(x => x.FlowerCategory);
             AddOrderBy(x => x.Name);
-            ApplyPaging(flowerParams.PageSize * (flowerParams.PageIndex -1), flowerParams.PageSize);
+            ApplyPaging(productParams.PageSize * (productParams.PageIndex -1), productParams.PageSize);
 
-            if(! string.IsNullOrEmpty(flowerParams.Sort))
+            if(! string.IsNullOrEmpty(productParams.Sort))
             {
-                switch(flowerParams.Sort){
+                switch(productParams.Sort){
                     case "priceAsc":
                         AddOrderBy(p => p.Price);
                         break;
@@ -36,7 +36,7 @@ namespace Core.Specifications
 
         }
 
-        public FlowersWithTypesAndCategoriesSpecification(int id) : base(x =>x.Id == id)
+        public ProductsWithTypesAndCategoriesSpecification(int id) : base(x =>x.Id == id)
         {
             AddInclude(x => x.FlowerType);
             AddInclude(x => x.FlowerCategory);

@@ -1,6 +1,6 @@
 namespace Core.Specifications
 {
-    public class FlowerSpecParams
+    public class ProductSpecParams
     {
         private const int MaxPageSize = 50;
 
