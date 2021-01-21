@@ -1,62 +1,84 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using API.Dtos;
+using API.Errors;
+using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
+using Core.Specifications;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class FlowersController : ControllerBase
+
+    public class FlowersController : BaseApiController
     {
-        private readonly IFlowerRepository _repo;
+        private readonly IGenericRepository<Flower> _flowersRepo;
+        private readonly IGenericRepository<FlowerCategory> _flowersCategoriesRepo;
+        private readonly IGenericRepository<FlowerType> _flowerTypesRepo;
+        private readonly IMapper _mapper;
 
-        public FlowersController(IFlowerRepository repo)
+        public FlowersController(IGenericRepository<Flower> flowersRepo,
+                                  IGenericRepository<FlowerCategory> flowerCategoriesRepo,
+                                  IGenericRepository<FlowerType> flowerTypesRepo,
+                                  IMapper mapper)
         {
-            _repo = repo;
-
+            _mapper = mapper;
+            _flowersRepo = flowersRepo;
+            _flowersCategoriesRepo = flowerCategoriesRepo;
+            _flowerTypesRepo = flowerTypesRepo;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Flower>>> GetFlowers()
+        public async Task<ActionResult<IReadOnlyList<FlowerToReturnDto>>> GetProducts()
         {
-            var flowers = await _repo.GetFlowersAsync();
-            return Ok(flowers);
+            var spec = new FlowersWithTypesAndCategoriesSpecification();
+
+            var flowers = await _flowersRepo.ListAsync(spec);
+
+            return Ok(_mapper.Map<IReadOnlyList<Flower>, IReadOnlyList<FlowerToReturnDto>>(flowers));
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Flower>> GetFlower(int id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse),StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<FlowerToReturnDto>> GetProduct(int id)
         {
-            return await _repo.GetFlowerByIdAsync(id);
+            var spec = new FlowersWithTypesAndCategoriesSpecification(id);
+            var flower = await _flowersRepo.GetEntityWithSpec(spec);
+            if (flower == null) return NotFound(new ApiResponse(404));
+            return _mapper.Map<Flower, FlowerToReturnDto>(flower);
+
         }
 
-        [HttpGet("categories")]
+        [HttpGet("brands")]
         public async Task<ActionResult<List<FlowerCategory>>> GetFlowerCategories()
         {
-            var categories = await _repo.GetFlowerCategoriesAsync();
-            return Ok(categories);
+            var flowerCategories = await _flowersCategoriesRepo.ListAllAsync();
+            return Ok(flowerCategories);
         }
 
-        [HttpGet("categories/{id}")]
+        [HttpGet("brands/{id}")]
         public async Task<ActionResult<FlowerCategory>> GetFlowerCategory(int id)
         {
-            return await _repo.GetFlowerCategoryByIdAsync(id);
+            return await _flowersCategoriesRepo.GetByIdAsync(id);
         }
 
         [HttpGet("types")]
         public async Task<ActionResult<List<FlowerType>>> GetFlowerTypes()
         {
-            var types = await _repo.GetFlowerTypesAsync();
-            return Ok(types);
+            var flowerTypes = await _flowerTypesRepo.ListAllAsync();
+            return Ok(flowerTypes);
         }
 
         [HttpGet("types/{id}")]
         public async Task<ActionResult<FlowerType>> GetFlowerType(int id)
         {
-            return await _repo.GetFlowerTypeByIdAsync(id);
+            return await _flowerTypesRepo.GetByIdAsync(id);
         }
 
 

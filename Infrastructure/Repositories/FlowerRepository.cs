@@ -1,10 +1,11 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Core.Entities;
 using Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Data
+namespace Infrastructure.Data.Repositories
 {
     public class FlowerRepository : IFlowerRepository
     {
@@ -14,11 +15,9 @@ namespace Infrastructure.Data
             _context = context;
         }
 
-
-
-        public async Task<Flower> GetFlowerByIdAsync(int id)
+        public async Task<FlowerCategory> GetFlowerCategoryByIdAsync(int id)
         {
-            return await _context.Flowers.Include(p => p.FlowerType).Include(p => p.FlowerCategory).FirstOrDefaultAsync(p => p.Id==id);
+            return await _context.FlowerCategories.FindAsync(id);;
         }
 
         public async Task<IReadOnlyList<FlowerCategory>> GetFlowerCategoriesAsync()
@@ -26,9 +25,10 @@ namespace Infrastructure.Data
             return await _context.FlowerCategories.ToListAsync();
         }
 
-        public async Task<FlowerCategory> GetFlowerCategoryByIdAsync(int id)
+        public async Task<Flower> GetFlowerByIdAsync(int id)
         {
-            return await _context.FlowerCategories.FindAsync(id);;
+            
+            return await _context.Flowers.Include(p => p.FlowerType).Include(p => p.FlowerCategory).FirstOrDefaultAsync(p => p.Id==id);
         }
 
         public async Task<IReadOnlyList<Flower>> GetFlowersAsync()
@@ -43,7 +43,7 @@ namespace Infrastructure.Data
 
         public async Task<IReadOnlyList<FlowerType>> GetFlowerTypesAsync()
         {
-            return await _context.FlowerTypes.ToListAsync();
+             return await _context.FlowerTypes.ToListAsync();
         }
     }
 }

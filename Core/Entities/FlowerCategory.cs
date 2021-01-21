@@ -1,8 +1,7 @@
 namespace Core.Entities
 {
-    public class FlowerCategory
+    public class FlowerCategory:BaseEntity
     {
-        public int Id { get; set; }
         public string Name { get; set; }
     }
 }
