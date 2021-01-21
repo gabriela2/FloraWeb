@@ -6,7 +6,7 @@ using Core.Interfaces;
 using Core.Specifications;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Data.Repositories
+namespace Infrastructure.Data
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {
@@ -14,6 +14,11 @@ namespace Infrastructure.Data.Repositories
         public GenericRepository(StoreContext context)
         {
             _context = context;
+        }
+
+        public async Task<int> CountAsync(ISpecification<T> spec)
+        {
+            return await ApplySpecification(spec).CountAsync();
         }
 
         public async Task<T> GetByIdAsync(int id)

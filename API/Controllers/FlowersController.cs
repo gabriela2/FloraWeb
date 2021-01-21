@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Dtos;
 using API.Errors;
+using API.Helpers;
 using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
@@ -34,19 +35,20 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<FlowerToReturnDto>>> GetProducts()
+        public async Task<ActionResult<IReadOnlyList<FlowerToReturnDto>>> GetFlowers([FromQuery]FlowerSpecParams flowerParams)
         {
-            var spec = new FlowersWithTypesAndCategoriesSpecification();
-
+            var spec = new FlowersWithTypesAndCategoriesSpecification(flowerParams);
+            var countSpec =  new FlowerWithFiltersForCountSpecification(flowerParams);
+            var totalItems = await _flowersRepo.CountAsync(countSpec);
             var flowers = await _flowersRepo.ListAsync(spec);
-
-            return Ok(_mapper.Map<IReadOnlyList<Flower>, IReadOnlyList<FlowerToReturnDto>>(flowers));
+            var data = _mapper.Map<IReadOnlyList<Flower>, IReadOnlyList<FlowerToReturnDto>>(flowers);
+            return Ok( new Pagination<FlowerToReturnDto>(flowerParams.PageIndex, flowerParams.PageSize, totalItems, data));
         }
 
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse),StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<FlowerToReturnDto>> GetProduct(int id)
+        public async Task<ActionResult<FlowerToReturnDto>> GetFlower(int id)
         {
             var spec = new FlowersWithTypesAndCategoriesSpecification(id);
             var flower = await _flowersRepo.GetEntityWithSpec(spec);
